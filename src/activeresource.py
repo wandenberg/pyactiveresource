@@ -419,6 +419,12 @@ class ActiveResource(object):
         #TODO(mrroach): figure out prefix_options
         prefix_options = {}
         query_options = {}
+
+        if options.has_key('query_params') and isinstance(options['query_params'], dict):
+            query_params = options.pop('query_params')
+            for key, value in query_params.items():
+                options[key] = value
+
         for key, value in options.items():
             if isinstance(value, list):
                 key = '%s[]' % key

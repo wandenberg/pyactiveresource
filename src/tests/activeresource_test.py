@@ -175,6 +175,14 @@ class ActiveResourceTest(unittest.TestCase):
         arnold = self.person.find_first(vars={'key': ['val1', 'val2']})
         self.assertEqual(self.arnold, arnold.attributes)
 
+    def test_find_should_handle_query_params_argument_with_dict_value_to_support_complex_filters(self):
+        query = urllib.urlencode({'count.gt':5, 'vars[key][]': ['val1', 'val2'], 'name':'xpto'}, True)
+        self.http.respond_to(
+            'GET', '/people.xml?%s' % query, {},
+            util.to_xml([self.arnold], root='people'))
+        arnold = self.person.find_first(vars={'key': ['val1', 'val2']}, query_params={'name':'xpto', 'count.gt':5})
+        self.assertEqual(self.arnold, arnold.attributes)
+
     def test_find_with_prefix_options(self):
         # Paths for prefix_options related requests
         self.http.respond_to(
