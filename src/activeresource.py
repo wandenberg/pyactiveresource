@@ -877,16 +877,20 @@ class ActiveResource(object):
         if not isinstance(attributes, dict):
             return
         for key, value in attributes.items():
-            if isinstance(value, dict):
-                klass = self._find_class_for(key)
-                attr = klass(value)
-            elif isinstance(value, list):
-                klass = self._find_class_for_collection(key)
-                attr = [klass(child) for child in value]
-            else:
-                attr = value
+            attr = self._transform_value(key, value)
             # Store the actual value in the attributes dictionary
             self.attributes[key] = attr
+
+    def _transform_value(self, key, value):
+        if isinstance(value, dict):
+            klass = self._find_class_for(key)
+            attr = klass(value)
+        elif isinstance(value, list):
+            attr = [self._transform_value(key, child) for child in value if child]
+        else:
+            attr = value
+
+        return attr
 
     @classmethod
     def _find_class_for_collection(cls, collection_name):
