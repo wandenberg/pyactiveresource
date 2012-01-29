@@ -49,7 +49,7 @@ class UtilTest(unittest.TestCase):
             'replies_count': 0,
             'replies_close_in': 2592000000L,
             'written_on': datetime.date(2003, 7, 16),
-            'viewed_at': util.date_parse('2003-07-16T9:28Z'),
+            'viewed_at': util.date_parse('2003-07-16T09:28Z'),
             'content': {':message': 'Have a nice day',
                         1: 'should be an integer',
                         'array': [{'should-have-dashes': True,
@@ -275,6 +275,17 @@ class UtilTest(unittest.TestCase):
         xml = util.to_xml({'key_name': 'value'}, dasherize=False)
         self.assert_('<key_name>value</key_name>' in xml)
 
+    def test_camelize_starting_with_underscore(self):
+        camelized = util.camelize('_starts')
+        self.assertEqual('Starts', camelized)
+
+    def test_camelize_ending_with_underscore(self):
+        camelized = util.camelize('ends_')
+        self.assertEqual('Ends', camelized)
+
+    def test_camelize_with_double_underscores(self):
+        camelized = util.camelize('double__underscores')
+        self.assertEqual('DoubleUnderscores', camelized)
 
 if __name__ == '__main__':
     unittest.main()
